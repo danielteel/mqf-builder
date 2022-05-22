@@ -1,6 +1,9 @@
 import React, {useState, useRef} from 'react';
+
+import CodeEditor from '@uiw/react-textarea-code-editor';
+
 import compile from './compiler/compile';
-import './App.css';
+
 
 
 function App() {
@@ -34,11 +37,30 @@ function App() {
   }
 
   return (
-    <div className="App">
-        <textarea value={code} onChange={handleChange}/>
+    <div className="App" style={{width: '100vw', height: '100vh'}}>
+        {
+          //<textarea value={code} onChange={handleChange}/>
+        }
+        
+        <CodeEditor
+          value={code}
+          language="js"
+          onChange={handleChange}
+          padding={0}
+          style={{
+            fontSize: 12,
+            width:'100%',
+            height: '100%',
+            backgroundColor: "#f5f5f5",
+            fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
+          }}
+        />
         <input type='button' value='Compile' onClick={compiledClick}/>
-        <pre style={{width: '100vw', textAlign:'left'}}>{json}</pre>
-        <iframe ref={iframeRef} style={{width:'100vw', height: '100vh'}}></iframe>
+        {
+          
+          //<pre style={{width: '100vw', textAlign:'left'}}>{json}</pre>
+          //<iframe ref={iframeRef} style={{width:'100vw', height: '100vh'}}></iframe>
+        }
     </div>
   );
 }
