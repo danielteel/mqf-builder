@@ -1,96 +1,89 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
+import LinearProgress from '@mui/material/LinearProgress';
 
-import AceEditor from "react-ace";
+import BottomNavigation from '@mui/material/BottomNavigation';
+import BottomNavigationAction from '@mui/material/BottomNavigationAction';
+import CodeIcon from '@mui/icons-material/Code';
+import TableRowsIcon from '@mui/icons-material/TableRows';
+import SettingsIcon from '@mui/icons-material/Settings';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 
-import compile from './compiler/compile';
-
-
+import Editor from './Editor';
 
 import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/mode-text';
 import 'ace-builds/src-noconflict/theme-monokai';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
 
-import { Typography } from '@mui/material';
 
 
 require(`./mode-mqfl`);
 
 
 function App() {
-    const [errorsAndWarnings, setErrorsAndWarnings]=useState([]);
-    const [code, setCode] = useState('');
-    const aceRef = useRef();
+    const [code, _setCode] = useState(null);
+    const [codeIsNotSaved, setCodeIsNotSaved] = useState(false);
+    const localStorageTimeoutIdRef = useRef();
 
+    const setCode = (newCode) => {
+        _setCode( () => {
+            if (localStorageTimeoutIdRef.current){
+                clearTimeout(localStorageTimeoutIdRef.current);
+                localStorageTimeoutIdRef.current=null;
+            }
 
-    useEffect( () => {
-      //  aceRef.current.editor.getSession().$mode.$highlightRules.$rules.start.push({token : "comment", regex : /^\s*>.*$/gm});
-    }, [aceRef.current]);
+            setCodeIsNotSaved(true);
 
-    const codeChanged = (newValue) => {
-        setCode(()=>newValue);
+            const timeoutId = setTimeout( () => {
+                console.log("get fucked");
+                localStorage.setItem('mqf-builder-code', newCode);
+                localStorageTimeoutIdRef.current=null;
+                setCodeIsNotSaved(false);
+            }, 1000);
+
+            localStorageTimeoutIdRef.current=timeoutId;
+            return newCode;
+        });
     }
 
-
     useEffect( () => {
-        const timeout = setTimeout( async () => {
-            const retVal = await compile(code, true);
-            setErrorsAndWarnings(()=>[]);
-            if (retVal.error){
-                setErrorsAndWarnings( () => [retVal.error])
-            }
-            if (retVal.warnings){
-                if (retVal.warnings) setErrorsAndWarnings((prev)=>[...prev, ...retVal.warnings]);
-            }
-        }, 50);
+        localStorageTimeoutIdRef.current = null;
+        setTimeout( () => {
+            const loadedCode = localStorage.getItem('mqf-builder-code');
+            _setCode(loadedCode);
+        }, 500);
+    }, []);
 
-        return () => clearTimeout(timeout);
-    }, [code]);
 
-    useEffect( () => {
-        aceRef.current.editor.resize();
-        aceRef.current.editor.getSession().clearBreakpoints();
-        for (const errorOrWarning of errorsAndWarnings){
-            aceRef.current.editor.getSession().setBreakpoint(errorOrWarning.line-1);
-        }
-    }, [errorsAndWarnings])
+
 
     return (
-        <Container sx={{height: '100vh', display: 'flex', flexDirection:'column'}}>
-            <AceEditor
-                ref={aceRef}
-                onChange={codeChanged}
-                mode="mqfl"
-                theme="monokai"
-                style={{flexGrow: 1}}
-                width='100%'
-                debounceChangePeriod={200}
-                fontSize={14}
-                highlightActiveLine={true}
-                setOptions={{
-                    showGutter: true,
-                    showPrintMargin: false,
-                    showLineNumbers: true,
-                    tabSize: 4,
-                    wrapBehavioursEnabled: true,
-                    wrap: true
-                }}
-            />
-            <List dense sx={{maxHeight: '200px', overflowY: 'scroll'}}>
+        <Container sx={{height: '100%', display: 'flex', flexDirection:'column'}}>
+            <AppBar position='sticky'>
+                <Toolbar>
+                MQF Builder
+                </Toolbar>
+            </AppBar>
             {
-                errorsAndWarnings.map( errorOrWarning=> (
-                    <ListItemButton onClick={()=>{aceRef.current.editor.gotoLine(errorOrWarning.line);}}>
-                        <Typography sx={{color: errorOrWarning.type==='warning'?'warning.main':'error.main'}}>
-                            {errorOrWarning.message}
-                        </Typography>
-                    </ListItemButton>
-                ))
+                codeIsNotSaved
+                ?
+                    <LinearProgress color='warning'/>
+                :
+                    <LinearProgress color='success' variant='determinate' value={100}/>
             }
-            </List>
+            <Paper sx={{height: '100%', display: 'flex', flexDirection:'column'}}>
+                <Editor code={code} setCode={setCode}/>
+            </Paper>
+            <BottomNavigation showLabels>
+                <BottomNavigationAction label="Code" icon={<CodeIcon/>} />
+                <BottomNavigationAction label="Questions" icon={<TableRowsIcon/>} />
+                <BottomNavigationAction label="Documentation" icon={<QuestionMarkIcon/>} />
+                <BottomNavigationAction label="Options" icon={<SettingsIcon />} />
+            </BottomNavigation>
         </Container>
     );
 }

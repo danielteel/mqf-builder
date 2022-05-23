@@ -15,16 +15,20 @@ window.ace.define("ace/mode/mqfl_highlight_rules",["require","exports","module",
                     regex: /^\s*@.*$/
                 }, {
                     token: 'variable.parameter',//ref
-                    regex: /^\s*(ref|reference)\s*:.*$/
+                    regex: /^\s*(ref|reference)\s*:.*$/,
+                    caseInsensitive: true
                 }, {
                     token: 'string',//answer
-                    regex: /^\s*[a-z]\s*\..*$/
+                    regex: /^\s*[a-z]\s*\..*$/,
+                    caseInsensitive: true
                 }, {
                     token: 'variable',//correct answer
-                    regex: /^\s*\*\s*[a-z]\s*\..*$/
+                    regex: /^\s*\*\s*[a-z]\s*\..*$/,
+                    caseInsensitive: true
                 }, {
                     token: 'variable',//correct answer
-                    regex: /^\s*answer\s*:.*$/
+                    regex: /^\s*answer\s*:.*$/,
+                    caseInsensitive: true
                 }, {
                     token: "storage",//Title
                     regex: /^\s*!.*$/

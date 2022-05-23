@@ -23,7 +23,9 @@ root.render(
     <React.StrictMode>
         <ThemeProvider theme={darkTheme}>
             <CssBaseline/>
-            <App/>
+            <div style={{height:'100vh'}}>
+              <App/>
+            </div>
         </ThemeProvider>
     </React.StrictMode>
 );
