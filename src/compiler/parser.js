@@ -108,6 +108,9 @@ export default class Parser {
                 if (correctExplicit) this.throwError('you can only specify one explicit correct choice via "Answer: A/B/C/D/E/F" per question.');
                 correctExplicit=this.match(TokenType.Correct);
             }else if (this.token.type===TokenType.Question){
+                if (answers.length || correct.length || correctExplicit!==null | ref!=null){
+                    this.throwError('expected an choice, correct answer, or ref but found a new question');
+                }
                 this.addWarning('attempting to fix possible multiline question, verify and consolidate to one line please');
                 question+=this.match(TokenType.Question);
             }
@@ -121,7 +124,7 @@ export default class Parser {
             this.throwError('questions need to have at least 1 correct answer');
         }
 
-        if (correctExplicit && correct.length){
+        if (correctExplicit!==null && correct.length){
             this.throwError('you can only specify correct answer(s) via *s or explicit "Answer: <correct choice>", not both');
         }
 

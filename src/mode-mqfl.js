@@ -1,0 +1,76 @@
+window.ace.define("ace/mode/mqfl_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/text_highlight_rules"], function(require, exports, module) {
+    "use strict";
+    
+    var oop = require("../lib/oop");
+    var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
+    
+    var MQFLHighlightRules = function() {
+        this.$rules = {
+            "start" : [
+                {
+                    token: "support.function",//section
+                    regex: /^\s*:.*$/
+                }, {
+                    token: "constant.character.asterisk",//flag
+                    regex: /^\s*@.*$/
+                }, {
+                    token: 'variable.parameter',//ref
+                    regex: /^\s*(ref|reference)\s*:.*$/
+                }, {
+                    token: 'string',//answer
+                    regex: /^\s*[a-z]\s*\..*$/
+                }, {
+                    token: 'variable',//correct answer
+                    regex: /^\s*\*\s*[a-z]\s*\..*$/
+                }, {
+                    token: 'variable',//correct answer
+                    regex: /^\s*answer\s*:.*$/
+                }, {
+                    token: "storage",//Title
+                    regex: /^\s*!.*$/
+                }, {
+                    token: "comment",//Comment
+                    regex: /^\s*>.*$/
+                }, {
+                    token: "term",
+                    regex: /\w+/
+                }, {
+                    token: "text",
+                    regex: /\s+/
+                }
+            ]
+        };
+    };
+    
+    oop.inherits(MQFLHighlightRules, TextHighlightRules);
+    
+    exports.MQFLHighlightRules = MQFLHighlightRules;
+    });
+    
+    window.ace.define("ace/mode/mqfl",["require","exports","module","ace/lib/oop","ace/mode/text","ace/mode/mqfl_highlight_rules"], function(require, exports, module) {
+    'use strict';
+    
+    var oop = require("../lib/oop");
+    var TextMode = require("./text").Mode;
+    var MQFLHighlightRules = require("./mqfl_highlight_rules").MQFLHighlightRules;
+    
+    var Mode = function() {
+        this.HighlightRules = MQFLHighlightRules;
+        this.$behaviour = this.$defaultBehaviour;
+    };
+    
+    oop.inherits(Mode, TextMode);
+    
+    (function() {
+        this.$id = "ace/mode/mqfl";
+    }).call(Mode.prototype);
+    
+    exports.Mode = Mode;
+    });                (function() {
+                        window.ace.require(["ace/mode/mqfl"], function(m) {
+                            if (typeof module == "object" && typeof exports == "object" && module) {
+                                module.exports = m;
+                            }
+                        });
+                    })();
+                

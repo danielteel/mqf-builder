@@ -10,12 +10,15 @@ import AceEditor from "react-ace";
 import compile from './compiler/compile';
 
 
+
 import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/mode-text';
 import 'ace-builds/src-noconflict/theme-monokai';
 
 import { Typography } from '@mui/material';
 
+
+require(`./mode-mqfl`);
 
 
 function App() {
@@ -25,7 +28,7 @@ function App() {
 
 
     useEffect( () => {
-        aceRef.current.editor.getSession().$mode.$highlightRules.$rules.start.unshift({token : "comment", regex : /^\s*>.*$/gm});
+      //  aceRef.current.editor.getSession().$mode.$highlightRules.$rules.start.push({token : "comment", regex : /^\s*>.*$/gm});
     }, [aceRef.current]);
 
     const codeChanged = (newValue) => {
@@ -61,7 +64,7 @@ function App() {
             <AceEditor
                 ref={aceRef}
                 onChange={codeChanged}
-                mode="text"
+                mode="mqfl"
                 theme="monokai"
                 style={{flexGrow: 1}}
                 width='100%'

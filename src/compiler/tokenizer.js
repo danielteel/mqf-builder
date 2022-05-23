@@ -174,7 +174,7 @@ export default class Tokenizer {
             return;
         }
 
-        this.currentCodeLine=oldCurrentCodeLine;
+        this.currentCodeLine=oldCurrentCodeLine-1;
         this.lookIndex=savedIndex-1;
         this.getChar();
         this.addToken(TokenType.Question, this.readRestOfLine());
