@@ -8,15 +8,17 @@ let shellStart=null;
 let shellEnd=null;
 
 export default async function compile(text, justJSON=false){
-    try {
-        if (!shellStart){
-            shellStart=await (await fetch(shellStartFile)).text();
+    if (!justJSON){
+        try {
+            if (!shellStart){
+                shellStart=await (await fetch(shellStartFile)).text();
+            }
+            if (!shellEnd){
+                shellEnd=await (await fetch(shellEndFile)).text();
+            }
+        } catch (e) {
+            return {error: 'failed to fetch shell strings'};
         }
-        if (!shellEnd){
-            shellEnd=await (await fetch(shellEndFile)).text();
-        }
-    } catch (e) {
-        return {error: 'failed to fetch shell strings'};
     }
 
     let tokens;
@@ -26,9 +28,9 @@ export default async function compile(text, justJSON=false){
         return {error: e};
     }
 
-    let mqf;
+    let mqf, warnings;
     try {
-        mqf=Parser.parse(tokens);
+        ({mqf, warnings} = Parser.parse(tokens));
     } catch (e) {
         return {error: e};
     }
@@ -36,10 +38,10 @@ export default async function compile(text, justJSON=false){
     try {
         if (justJSON){
             const htmlMQF=JSON.stringify(mqf, null, '    ');
-            return {value: htmlMQF};
+            return {value: htmlMQF, warnings: warnings};
         }else{
             const htmlMQF=JSON.stringify(mqf).replaceAll("'", "\\'");
-            return {value: shellStart+htmlMQF+shellEnd};
+            return {value: shellStart+htmlMQF+shellEnd, warnings: warnings};
         }
     } catch (e) {
         return {error: 'failed to stringify mqf into JSON'};

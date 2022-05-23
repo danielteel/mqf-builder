@@ -1,68 +1,95 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 
-import CodeEditor from '@uiw/react-textarea-code-editor';
+import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+
+import AceEditor from "react-ace";
 
 import compile from './compiler/compile';
 
 
+import 'ace-builds/src-noconflict/mode-javascript';
+import 'ace-builds/src-noconflict/mode-text';
+import 'ace-builds/src-noconflict/theme-monokai';
+
+import { Typography } from '@mui/material';
+
+
 
 function App() {
-  const [code, setCode] = useState('');
-  const [json, setJSON] = useState('');
-  const iframeRef = useRef();
-  
-  const handleChange = (e) => {
-    setCode(e.target.value);
-  }
+    const [errorsAndWarnings, setErrorsAndWarnings]=useState([]);
+    const [code, setCode] = useState('');
+    const aceRef = useRef();
 
-  const compiledClick = async () => {
-    const retVal = await compile(code, true);
-    if (retVal.error){
-      console.error("get fucked", retVal.error.message);
-      setJSON(retVal.error.message);
-    }else{
-      setJSON(retVal.value);
-    }
-    
-    const html = await compile(code);
-    if (html.error){
-      iframeRef.current.contentWindow.document.open();
-      iframeRef.current.contentWindow.document.write('shits broke: '+html.error.message);
-      iframeRef.current.contentWindow.document.close();
-    }else{
-      iframeRef.current.contentWindow.document.open();
-      iframeRef.current.contentWindow.document.write(html.value);
-      iframeRef.current.contentWindow.document.close();
-    }
-  }
 
-  return (
-    <div className="App" style={{width: '100vw', height: '100vh'}}>
-        {
-          //<textarea value={code} onChange={handleChange}/>
+    useEffect( () => {
+        aceRef.current.editor.getSession().$mode.$highlightRules.$rules.start.unshift({token : "comment", regex : /^\s*>.*$/gm});
+    }, [aceRef.current]);
+
+    const codeChanged = (newValue) => {
+        setCode(()=>newValue);
+    }
+
+
+    useEffect( () => {
+        const timeout = setTimeout( async () => {
+            const retVal = await compile(code, true);
+            setErrorsAndWarnings(()=>[]);
+            if (retVal.error){
+                setErrorsAndWarnings( () => [retVal.error])
+            }
+            if (retVal.warnings){
+                if (retVal.warnings) setErrorsAndWarnings((prev)=>[...prev, ...retVal.warnings]);
+            }
+        }, 50);
+
+        return () => clearTimeout(timeout);
+    }, [code]);
+
+    useEffect( () => {
+        aceRef.current.editor.resize();
+        aceRef.current.editor.getSession().clearBreakpoints();
+        for (const errorOrWarning of errorsAndWarnings){
+            aceRef.current.editor.getSession().setBreakpoint(errorOrWarning.line-1);
         }
-        
-        <CodeEditor
-          value={code}
-          language="js"
-          onChange={handleChange}
-          padding={0}
-          style={{
-            fontSize: 12,
-            width:'100%',
-            height: '100%',
-            backgroundColor: "#f5f5f5",
-            fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
-          }}
-        />
-        <input type='button' value='Compile' onClick={compiledClick}/>
-        {
-          
-          //<pre style={{width: '100vw', textAlign:'left'}}>{json}</pre>
-          //<iframe ref={iframeRef} style={{width:'100vw', height: '100vh'}}></iframe>
-        }
-    </div>
-  );
+    }, [errorsAndWarnings])
+
+    return (
+        <Container sx={{height: '100vh', display: 'flex', flexDirection:'column'}}>
+            <AceEditor
+                ref={aceRef}
+                onChange={codeChanged}
+                mode="text"
+                theme="monokai"
+                style={{flexGrow: 1}}
+                width='100%'
+                debounceChangePeriod={200}
+                fontSize={14}
+                highlightActiveLine={true}
+                setOptions={{
+                    showGutter: true,
+                    showPrintMargin: false,
+                    showLineNumbers: true,
+                    tabSize: 4,
+                    wrapBehavioursEnabled: true,
+                    wrap: true
+                }}
+            />
+            <List dense sx={{maxHeight: '200px', overflowY: 'scroll'}}>
+            {
+                errorsAndWarnings.map( errorOrWarning=> (
+                    <ListItemButton onClick={()=>{aceRef.current.editor.gotoLine(errorOrWarning.line);}}>
+                        <Typography sx={{color: errorOrWarning.type==='warning'?'warning.main':'error.main'}}>
+                            {errorOrWarning.message}
+                        </Typography>
+                    </ListItemButton>
+                ))
+            }
+            </List>
+        </Container>
+    );
 }
 
 export default App;

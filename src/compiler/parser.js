@@ -5,7 +5,7 @@ export default class Parser {
     static parse(tokens){
         const parser=new Parser(tokens);
         parser.parse();
-        return parser.mqf;
+        return {mqf: parser.mqf, warnings: parser.warnings};
     }
 
     constructor(tokens){
@@ -23,8 +23,12 @@ export default class Parser {
         this.stripChar=null;
 
         this.mqf={sections:[]};
-
+        this.warnings=[];
         this.doMQF();
+    }
+
+    addWarning(message){
+        this.warnings.push({message: 'Warning near line '+this.token.line+': '+message, line: this.token.line, type: 'warning'});
     }
 
     throwError(message) {
@@ -34,7 +38,8 @@ export default class Parser {
 		}else{
 			errorLine=this.tokens[this.tokens.length-1].line;//Probably ran to the end of the token buffer, so just grab the last code line
 		}
-		throw new Error("Parser error on line "+errorLine+": "+message);
+        const error={message: "Parser error on or near line "+errorLine+": "+message, line: errorLine};
+		throw error;
 	}
     
 	symbolToString(sym){
@@ -81,8 +86,9 @@ export default class Parser {
         const answers=[];
         let ref=null;
         const correct=[];
+        let correctExplicit=null;
 
-        while (this.token && (this.token.type===TokenType.Answer || this.token.type===TokenType.Ref)){
+        while (this.token && (this.token.type===TokenType.Answer || this.token.type===TokenType.Ref || this.token.type===TokenType.Correct || (answers.length===0 && this.token.type===TokenType.Question))){
             if (this.token.type===TokenType.Answer){
                 const answer = this.match(TokenType.Answer);
 
@@ -98,6 +104,12 @@ export default class Parser {
             }else if (this.token.type===TokenType.Ref){
                 if (ref) this.throwError('cannot have more than one ref per question');
                 ref=this.match(TokenType.Ref);
+            }else if (this.token.type===TokenType.Correct){
+                if (correctExplicit) this.throwError('you can only specify one explicit correct choice via "Answer: A/B/C/D/E/F" per question.');
+                correctExplicit=this.match(TokenType.Correct);
+            }else if (this.token.type===TokenType.Question){
+                this.addWarning('attempting to fix possible multiline question, verify and consolidate to one line please');
+                question+=this.match(TokenType.Question);
             }
         }
         
@@ -105,8 +117,20 @@ export default class Parser {
             this.throwError('questions need to have at least 2 possible answers');
         }
 
-        if (correct.length<1){
+        if (correct.length<1 && correctExplicit===null){
             this.throwError('questions need to have at least 1 correct answer');
+        }
+
+        if (correctExplicit && correct.length){
+            this.throwError('you can only specify correct answer(s) via *s or explicit "Answer: <correct choice>", not both');
+        }
+
+        if (correctExplicit>=answers.length){
+            this.throwError('attempted to specify a correct answer that doenst have an associated existing choice');
+        }
+        
+        if (correctExplicit){
+            correct.push(correctExplicit);
         }
 
         const questions = this.mqf.sections[this.mqf.sections.length-1].questions;

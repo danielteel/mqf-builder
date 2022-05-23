@@ -5,6 +5,7 @@ const TokenType = {
     Ref: Symbol('ref'),
     Answer: Symbol('answer'),
     End: Symbol('end'),
+    Correct: Symbol('correct'),
 
     StripTo: Symbol('stripto'),
     StripNum: Symbol('stripnum')

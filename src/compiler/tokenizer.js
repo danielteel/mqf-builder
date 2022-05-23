@@ -28,7 +28,8 @@ export default class Tokenizer {
     }
 
 	throwError(message) {
-		throw Error("Tokenizer error on line "+this.currentCodeLine+": "+message);
+        const error={message: "Tokenizer error on or near line "+this.currentCodeLine+": "+message, line: this.currentCodeLine, type: 'error'};
+		throw error;
 	}
 
     tokenize(code) {
@@ -132,6 +133,7 @@ export default class Tokenizer {
             return;
         }
         const savedIndex=this.lookIndex;
+        const oldCurrentCodeLine=this.currentCodeLine;
 
         let isCorrectAnswer=false;
         if (this.look==='*'){
@@ -154,8 +156,16 @@ export default class Tokenizer {
         this.getChar();
         
 
-        if (ident==='ref' && postSymbol===':'){
+        if ((ident==='ref' || ident==='reference') && postSymbol===':'){
             this.addToken(TokenType.Ref, this.readRestOfLine());
+            return;
+        }
+        if (ident==='answer' && postSymbol===':'){
+            const correctChar = this.readRestOfLine().toLowerCase().trim();
+            if (correctChar.length>1) this.throwError('explicit answer: can only have one valid character');
+            if (correctChar.length===0) this.throwError('explicit answer: must have one correct answer, you have none');
+            const correctAnswer = correctChar.charCodeAt()-'a'.charCodeAt();
+            this.addToken(TokenType.Correct, correctAnswer);
             return;
         }
         if (ident.length===1 && postSymbol==='.'){
@@ -163,7 +173,8 @@ export default class Tokenizer {
             this.addToken(TokenType.Answer, {id: answerId, text: this.readRestOfLine(), correct: isCorrectAnswer});
             return;
         }
-        
+
+        this.currentCodeLine=oldCurrentCodeLine;
         this.lookIndex=savedIndex-1;
         this.getChar();
         this.addToken(TokenType.Question, this.readRestOfLine());
