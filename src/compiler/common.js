@@ -8,7 +8,9 @@ const TokenType = {
     Correct: Symbol('correct'),
 
     StripTo: Symbol('stripto'),
-    StripNum: Symbol('stripnum')
+    StripNum: Symbol('stripnum'),
+
+    Comment: Symbol('comment')
 };
 
 export {TokenType};

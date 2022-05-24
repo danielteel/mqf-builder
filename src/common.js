@@ -10,14 +10,14 @@ export function isAlpha(character){
 }
 
 export function compileCodeForMQF(code){
-    const retVal = compileMQF(code);
+    const {error, warnings, mqf, mqfList} = compileMQF(code);
     const errorsAndWarnings = [];
 
-    if (retVal.error){
-        errorsAndWarnings.push(retVal.error);
+    if (error){
+        errorsAndWarnings.push(error);
     }
-    if (retVal.warnings){
-        errorsAndWarnings.push(...retVal.warnings);
+    if (warnings){
+        errorsAndWarnings.push(...warnings);
     }
-    return {mqf: retVal.mqf, errorsAndWarnings, hasError: !!retVal.error, hasWarning: !!retVal.warnings?.length};
+    return {mqf, mqfList, errorsAndWarnings, hasError: !!error, hasWarning: !!warnings?.length};
 }

@@ -5,7 +5,7 @@ export default class Parser {
     static parse(tokens){
         const parser=new Parser(tokens);
         parser.parse();
-        return {mqf: parser.mqf, warnings: parser.warnings};
+        return {mqf: parser.mqf, mqfList: parser.mqfList, warnings: parser.warnings};
     }
 
     constructor(tokens){
@@ -13,17 +13,17 @@ export default class Parser {
     }
 
     parse(){
-        if (this.tokens.length<=0) return [];
         this.title=null;
+        this.stripNum=0;
+        this.stripChar=null;
+        this.mqf={sections:[]};
+        this.mqfList=[];
+        this.warnings=[];
+
+        if (this.tokens.length<=0) return;
         this.token=null;
         this.tokenIndex=-1;
         this.getToken();
-        
-        this.stripTo=0;
-        this.stripChar=null;
-
-        this.mqf={sections:[]};
-        this.warnings=[];
         this.doMQF();
         if (!this.mqf.title) this.mqf.title='MQF';
     }
@@ -73,14 +73,15 @@ export default class Parser {
             this.mqf.sections.push({name: 'Questions', questions: []});
         }
         let question=this.match(TokenType.Question);
+        let preservedQuestion=question;
         if (this.stripChar){
             const index=question.indexOf(this.stripChar);
             if (index>=0){
-                question=question.slice(index+this.stripChar.length+this.stripTo).trim();
+                question=question.slice(index+this.stripChar.length+this.stripNum).trim();
             }
         }else{
-            if (this.stripTo>=0){
-                question=question.slice(this.stripTo).trim();
+            if (this.stripNum>=0){
+                question=question.slice(this.stripNum).trim();
             }
         }
         let expectAnswerIndex=0;
@@ -89,8 +90,11 @@ export default class Parser {
         const correct=[];
         let correctExplicit=null;
 
-        while (this.token && (this.token.type===TokenType.Answer || this.token.type===TokenType.Ref || this.token.type===TokenType.Correct || (answers.length===0 && this.token.type===TokenType.Question))){
-            if (this.token.type===TokenType.Answer){
+        while (this.token && (this.token.type===TokenType.Answer || this.token.type===TokenType.Comment || this.token.type===TokenType.Ref || this.token.type===TokenType.Correct || (answers.length===0 && this.token.type===TokenType.Question))){
+            if (this.token.type===TokenType.Comment){
+                this.mqfList.push({type: 'comment', data: this.match(TokenType.Comment)});
+                
+            }else if (this.token.type===TokenType.Answer){
                 const answer = this.match(TokenType.Answer);
 
                 if (answer.id!==expectAnswerIndex){
@@ -113,7 +117,9 @@ export default class Parser {
                     this.throwError('expected an choice, correct answer, or ref but found a new question');
                 }
                 this.addWarning('attempting to fix possible multiline question, verify and consolidate to one line please');
-                question+=this.match(TokenType.Question);
+                const appendThis=this.match(TokenType.Question);
+                question+=appendThis;
+                preservedQuestion+=appendThis;
             }
         }
         
@@ -139,30 +145,40 @@ export default class Parser {
 
         const questions = this.mqf.sections[this.mqf.sections.length-1].questions;
         questions.push({num: questions.length+1, question: question, choices: answers, ref: ref, correct: correct});
+
+        this.mqfList.push({type: 'question', data: {question: preservedQuestion, choices: answers, ref: ref, correct: correct}});
     }
 
 
     doMQF(){
         while (this.token){
             switch (this.token.type){
+                case TokenType.Comment:
+                    this.mqfList.push({type: 'comment', data: this.match(TokenType.Comment)});
+                    break;
+
                 case TokenType.Title:
                     if (this.mqf.title){
                         this.throwError('already had a title defined, dont try and make another one!');
                     }
                     this.mqf.title=this.match(TokenType.Title);
+                    this.mqfList.push({type: 'title', data: this.mqf.title})
                     break;
 
                 case TokenType.StripTo:
                     this.stripChar=this.match(TokenType.StripTo);
+                    this.mqfList.push({type: 'stripto', data: this.stripChar});
                     break;
 
                 case TokenType.StripNum:
-                    this.stripTo=this.match(TokenType.StripNum);
+                    this.stripNum=this.match(TokenType.StripNum);
+                    this.mqfList.push({type: 'stripnum', data: this.stripNum});
                     break;
 
                 case TokenType.Section:
                     const sectionName = this.match(TokenType.Section);
                     this.mqf.sections.push({name: sectionName, questions:[]})
+                    this.mqfList.push({type: 'section', data: sectionName});
                     break;
 
                 case TokenType.Question:

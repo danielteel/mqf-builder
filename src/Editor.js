@@ -42,13 +42,13 @@ export default function Editor({code, setCode}){
     }, [errorsAndWarnings]);
 
     const prettify = () => {
-        const {hasError, mqf} = compileCodeForMQF(code);
+        const {hasError, mqfList} = compileCodeForMQF(code);
         if (hasError){
             alert('Cant prettify when theres an error!');
             return;
         }
 
-        let newCode = '!'+mqf.title+'\n\n';
+        let newCode='';
 
         const choiceLoopFn = (correct, choice, index) => {
             if (correct.includes(index)){
@@ -58,20 +58,39 @@ export default function Editor({code, setCode}){
             }
         };
 
-        for (const section of mqf.sections){
-            newCode+=':'+section.name+'\n\n';
-            for (const question of section.questions){
-                if (isAlpha(question.question[0]) && question.question[1]==='.'){
-                    newCode+='  ?'+question.question+'\n';
-                }else{
-                    newCode+='  '+question.question+'\n';
-                }
-                newCode+='    Ref:'+question.ref+'\n';
+        for (const item of mqfList){
+            switch (item?.type){
+                case 'comment':
+                    newCode+='>'+item.data+'\n';
+                    break;
+                case 'stripto':
+                    newCode+='@stripto '+item.data+'\n\n';
+                    break;
+                case 'stripnum':
+                    newCode+='@stripnum '+item.data+'\n\n';
+                    break;
+                case 'title':
+                    newCode+='!'+item.data+'\n\n';
+                    break;
+                case 'section':
+                    newCode+=':'+item.data+'\n\n';
+                    break;
+                case 'question':
+                    if (isAlpha(item.data.question[0]) && item.data.question[1]==='.'){
+                        newCode+='  ?'+item.data.question+'\n';
+                    }else{
+                        newCode+='  '+item.data.question+'\n';
+                    }
+                    newCode+='    Ref:'+item.data.ref+'\n';
 
-                question.choices.forEach(choiceLoopFn.bind(null, question.correct));
-                newCode+='\n';
+                    item.data.choices.forEach(choiceLoopFn.bind(null, item.data.correct));
+                    newCode+='\n';
+                    break;
+                default:
+                    throw Error('unexpected mqfList type of '+item.type);
             }
         }
+        newCode=newCode.trim();
 
         aceRef.current.editor.setValue(newCode, -1);
     }
@@ -90,7 +109,7 @@ export default function Editor({code, setCode}){
                     <input type='button' value='Prettify' onClick={prettify}/>
                     <div style={{flexGrow:1}}></div>
                     <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-                        <TextField placeholder="Find..." variant="standard" />
+                        <TextField placeholder="Find..." variant="standard"/>
                         <IconButton>
                             <SearchIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }}/>
                         </IconButton>

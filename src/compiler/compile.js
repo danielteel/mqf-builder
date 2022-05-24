@@ -57,12 +57,10 @@ export function compileMQF(text){
         return {error: e};
     }
 
-    let mqf, warnings;
     try {
-        ({mqf, warnings} = Parser.parse(tokens));
+        const {mqf, mqfList, warnings} = Parser.parse(tokens);
+        return {warnings, mqf, mqfList};
     } catch (e) {
         return {error: e};
     }
-
-    return {warnings: warnings, mqf: mqf};
 }

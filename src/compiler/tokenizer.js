@@ -204,7 +204,8 @@ export default class Tokenizer {
                     this.throwError('got unexpected flag of '+flag);
                 }
             } else if (this.look==='>'){
-                this.readRestOfLine();
+                this.getChar();
+                this.addToken(TokenType.Comment, this.readRestOfLine());
             } else {
                 this.otherThanSection();
             }
