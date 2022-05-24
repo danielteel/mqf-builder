@@ -22,7 +22,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
         <ThemeProvider theme={darkTheme}>
-            <CssBaseline/>
+            <CssBaseline enableColorScheme />
             <div style={{height:'100vh'}}>
               <App/>
             </div>

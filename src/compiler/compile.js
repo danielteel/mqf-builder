@@ -38,12 +38,31 @@ export default async function compile(text, justJSON=false){
     try {
         if (justJSON){
             const htmlMQF=JSON.stringify(mqf, null, '    ');
-            return {value: htmlMQF, warnings: warnings};
+            return {value: htmlMQF, warnings: warnings, mqf: mqf};
         }else{
             const htmlMQF=JSON.stringify(mqf).replaceAll("'", "\\'");
-            return {value: shellStart+htmlMQF+shellEnd, warnings: warnings};
+            return {value: shellStart+htmlMQF+shellEnd, warnings: warnings, mqf: mqf};
         }
     } catch (e) {
         return {error: 'failed to stringify mqf into JSON'};
     }
+}
+
+
+export function compileMQF(text){
+    let tokens;
+    try {
+        tokens=Tokenizer.tokenize(text);
+    } catch (e) {
+        return {error: e};
+    }
+
+    let mqf, warnings;
+    try {
+        ({mqf, warnings} = Parser.parse(tokens));
+    } catch (e) {
+        return {error: e};
+    }
+
+    return {warnings: warnings, mqf: mqf};
 }

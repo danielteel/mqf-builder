@@ -25,6 +25,7 @@ export default class Parser {
         this.mqf={sections:[]};
         this.warnings=[];
         this.doMQF();
+        if (!this.mqf.title) this.mqf.title='MQF';
     }
 
     addWarning(message){
@@ -132,7 +133,7 @@ export default class Parser {
             this.throwError('attempted to specify a correct answer that doenst have an associated existing choice');
         }
         
-        if (correctExplicit){
+        if (correctExplicit!==null){
             correct.push(correctExplicit);
         }
 
