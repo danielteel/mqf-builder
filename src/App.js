@@ -8,12 +8,10 @@ import Toolbar from '@mui/material/Toolbar';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import CodeIcon from '@mui/icons-material/Code';
-import TableRowsIcon from '@mui/icons-material/TableRows';
 import SettingsIcon from '@mui/icons-material/Settings';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 
 import Editor from './Editor';
-import Questions from './Questions';
 
 import 'ace-builds/src-noconflict/theme-monokai';
 import { Typography } from '@mui/material';
@@ -23,10 +21,6 @@ const screens = [
     {
         label: 'Code',
         icon: <CodeIcon/>
-    },
-    {
-        label: 'Questions',
-        icon: <TableRowsIcon/>
     },
     {
         label: 'Documentation',
@@ -85,9 +79,6 @@ function App() {
     switch (screens[screen].label){
         case 'Code':
             screenRender=<Editor code={code} setCode={setCode}/>;
-            break;
-        case 'Questions':
-            screenRender=<Questions code={code} setCode={setCode}/>
             break;
         case 'Documentation':
             break;

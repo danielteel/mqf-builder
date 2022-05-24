@@ -14,7 +14,7 @@ import AceEditor from "react-ace";
 import {compileCodeForMQF, isAlpha} from './common';
 
 export default function Editor({code, setCode}){
-    
+    const [findText, setFindText] = useState('');
     const [errorsAndWarnings, setErrorsAndWarnings] = useState([]);
 
     const aceRef = useRef();
@@ -109,8 +109,10 @@ export default function Editor({code, setCode}){
                     <input type='button' value='Prettify' onClick={prettify}/>
                     <div style={{flexGrow:1}}></div>
                     <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-                        <TextField placeholder="Find..." variant="standard"/>
-                        <IconButton>
+                        <TextField placeholder="Find..." variant="standard" value={findText} onChange={(e)=>setFindText(e.target.value)} onKeyDown={(e)=>{
+                            if (e.key==='Enter') aceRef.current.editor.find(findText);
+                        }}/>
+                        <IconButton onClick={()=>aceRef.current.editor.find(findText)}>
                             <SearchIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }}/>
                         </IconButton>
                     </Box>
