@@ -51,7 +51,7 @@ export default function Editor({code, setCode}){
         let newCode='';
 
         const choiceLoopFn = (correct, choice, index) => {
-            if (correct.includes(index)){
+            if (correct.length>1 && correct.includes(index)){
                 newCode+='   *'+String.fromCharCode('A'.charCodeAt()+index)+'. '+choice+'\n';
             }else{
                 newCode+='    '+String.fromCharCode('A'.charCodeAt()+index)+'. '+choice+'\n';
@@ -81,17 +81,19 @@ export default function Editor({code, setCode}){
                     }else{
                         newCode+='  '+item.data.question+'\n';
                     }
-                    newCode+='    Ref:'+item.data.ref+'\n';
+                    if (item.data.ref) newCode+='    Ref: '+item.data.ref+'\n';
 
                     item.data.choices.forEach(choiceLoopFn.bind(null, item.data.correct));
+                    if (item.data.correct.length===1){
+                        newCode+='    Ans: '+String.fromCharCode('A'.charCodeAt()+item.data.correct[0])+'\n'
+                    }
                     newCode+='\n';
                     break;
                 default:
                     throw Error('unexpected mqfList type of '+item.type);
             }
         }
-        newCode=newCode.trim();
-
+        newCode=newCode.trimEnd();
         aceRef.current.editor.setValue(newCode, -1);
     }
 

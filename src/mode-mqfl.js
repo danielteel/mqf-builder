@@ -27,7 +27,7 @@ window.ace.define("ace/mode/mqfl_highlight_rules",["require","exports","module",
                     caseInsensitive: true
                 }, {
                     token: 'variable',//correct answer
-                    regex: /^\s*answer\s*:.*$/,
+                    regex: /^\s*(answer|ans)\s*:.*$/,
                     caseInsensitive: true
                 }, {
                     token: "storage",//Title

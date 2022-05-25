@@ -160,7 +160,7 @@ export default class Tokenizer {
             this.addToken(TokenType.Ref, this.readRestOfLine());
             return;
         }
-        if (ident==='answer' && postSymbol===':'){
+        if ((ident==='answer' || ident==='ans') && postSymbol===':'){
             const correctChar = this.readRestOfLine().toLowerCase().trim();
             if (correctChar.length>1) this.throwError('explicit answer: can only have one valid character');
             if (correctChar.length===0) this.throwError('explicit answer: must have one correct answer, you have none');
