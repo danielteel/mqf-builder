@@ -4,12 +4,12 @@ import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-import SearchIcon from '@mui/icons-material/Search';
-import TextField from '@mui/material/TextField';
+
 import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
 
 import AceEditor from "react-ace";
+
+import FindText from './FindText';
 
 import {compileCodeForMQF, isAlpha} from './common';
 
@@ -110,14 +110,7 @@ export default function Editor({code, setCode}){
                 <Box style={{display:'flex'}}>
                     <input type='button' value='Prettify' onClick={prettify}/>
                     <div style={{flexGrow:1}}></div>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-                        <TextField placeholder="Find..." variant="standard" value={findText} onChange={(e)=>setFindText(e.target.value)} onKeyDown={(e)=>{
-                            if (e.key==='Enter') aceRef.current.editor.find(findText);
-                        }}/>
-                        <IconButton onClick={()=>aceRef.current.editor.find(findText)}>
-                            <SearchIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }}/>
-                        </IconButton>
-                    </Box>
+                    <FindText aceRef={aceRef}/>
                 </Box>
                 <AceEditor
                     ref={aceRef}
