@@ -1,5 +1,5 @@
 
-import {compileMQF} from './compiler/compile';
+import compile, {compileMQF} from './compiler/compile';
 
 export function isAlpha(character){
     const charCode=character.charCodeAt(0);
@@ -7,6 +7,12 @@ export function isAlpha(character){
         return true;
     }
     return false;
+}
+
+export async function compileHTML(code){
+    const {value, error} = await compile(code);
+    if (error) return null;
+    return value;
 }
 
 export function compileCodeForMQF(code){

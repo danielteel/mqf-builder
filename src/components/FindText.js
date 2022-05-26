@@ -17,7 +17,7 @@ export default function FindText({aceRef}){
                 if (e.key==='Enter') aceRef.current.editor.find(findText);
             }}/>
             <IconButton onClick={()=>aceRef.current.editor.find(findText)}>
-                <SearchIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }}/>
+                <SearchIcon sx={{ color: 'action.active'}}/>
             </IconButton>
         </Box>
     );
