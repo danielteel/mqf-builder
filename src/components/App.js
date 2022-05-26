@@ -15,7 +15,7 @@ import Editor from './Editor';
 
 import 'ace-builds/src-noconflict/theme-monokai';
 import { Typography } from '@mui/material';
-require(`./mode-mqfl`);
+require(`../mode-mqfl`);
 
 const screens = [
     {
