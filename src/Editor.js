@@ -1,20 +1,16 @@
 import React, {useState, useRef, useEffect} from 'react';
 
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-
 import Box from '@mui/material/Box';
 
-import AceEditor from "react-ace";
-
 import FindText from './FindText';
+import CodeEditor from './CodeEditor';
 
 import {compileCodeForMQF, isAlpha} from './common';
+import ErrorsAndWarnings from './ErrorsAndWarnings';
+
 
 export default function Editor({code, setCode}){
-    const [findText, setFindText] = useState('');
     const [errorsAndWarnings, setErrorsAndWarnings] = useState([]);
 
     const aceRef = useRef();
@@ -28,18 +24,6 @@ export default function Editor({code, setCode}){
         return () => clearTimeout(timeout);
     }, [code]);
 
-    const codeChanged = (newValue) => {
-        setCode( newValue );
-    }
-
-    useEffect( () => {
-        if (!aceRef.current?.editor) return;
-        aceRef.current.editor.resize();
-        aceRef.current.editor.getSession().clearBreakpoints();
-        for (const errorOrWarning of errorsAndWarnings){
-            aceRef.current.editor.getSession().setBreakpoint(errorOrWarning.line-1);
-        }
-    }, [errorsAndWarnings]);
 
     const prettify = () => {
         const {hasError, mqfList} = compileCodeForMQF(code);
@@ -58,10 +42,12 @@ export default function Editor({code, setCode}){
             }
         };
 
-        for (const item of mqfList){
+        for (const [index, item] of mqfList.entries()){
+            const nextItem=mqfList[index+1]?.type;
             switch (item?.type){
                 case 'comment':
                     newCode+='>'+item.data+'\n';
+                    if (nextItem!=='comment') newCode+='\n';
                     break;
                 case 'stripto':
                     newCode+='@stripto '+item.data+'\n\n';
@@ -112,36 +98,8 @@ export default function Editor({code, setCode}){
                     <div style={{flexGrow:1}}></div>
                     <FindText aceRef={aceRef}/>
                 </Box>
-                <AceEditor
-                    ref={aceRef}
-                    defaultValue={code}
-                    onChange={codeChanged}
-                    mode="mqfl"
-                    theme="monokai"
-                    style={{flexGrow: 1, minHeight: '10px'}}
-                    width='100%'
-                    fontSize={14}
-                    highlightActiveLine={true}
-                    setOptions={{
-                        showGutter: true,
-                        showPrintMargin: false,
-                        showLineNumbers: true,
-                        tabSize: 4,
-                        wrapBehavioursEnabled: true,
-                        wrap: true
-                    }}
-                />
-                <List dense sx={{maxHeight: '10em', overflowY: 'scroll'}}>
-                    {
-                        errorsAndWarnings.map( (errorOrWarning, index) => (
-                            <ListItemButton key={errorOrWarning+'-'+index.toString()} onClick={()=>{aceRef.current.editor.gotoLine(errorOrWarning.line);}}>
-                                <Typography sx={{color: errorOrWarning.type==='warning'?'warning.main':'error.main'}}>
-                                    {errorOrWarning.message}
-                                </Typography>
-                            </ListItemButton>
-                        ))
-                    }
-                </List>
+                <CodeEditor defaultCode={code} setCode={setCode} aceRef={aceRef} errorsAndWarnings={errorsAndWarnings}/>
+                <ErrorsAndWarnings errorsAndWarnings={errorsAndWarnings} aceRef={aceRef}/>
             </div>
         );
     }

@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client';
 
 import App from './App';
 
+import Div100vh from 'react-div-100vh';
+
 import CssBaseline from '@mui/material/CssBaseline'
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import '@fontsource/roboto/300.css';
@@ -23,9 +25,9 @@ root.render(
     <React.StrictMode>
         <ThemeProvider theme={darkTheme}>
             <CssBaseline enableColorScheme />
-            <div style={{height:'100vh'}}>
+            <Div100vh>
               <App/>
-            </div>
+            </Div100vh>
         </ThemeProvider>
     </React.StrictMode>
 );

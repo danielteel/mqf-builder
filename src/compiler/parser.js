@@ -89,11 +89,11 @@ export default class Parser {
         let ref=null;
         const correct=[];
         let correctExplicit=null;
+        let comments = [];
 
         while (this.token && (this.token.type===TokenType.Answer || this.token.type===TokenType.Comment || this.token.type===TokenType.Ref || this.token.type===TokenType.Correct || (answers.length===0 && this.token.type===TokenType.Question))){
             if (this.token.type===TokenType.Comment){
-                this.mqfList.push({type: 'comment', data: this.match(TokenType.Comment)});
-                
+                comments.push({type: 'comment', data: this.match(TokenType.Comment)});                
             }else if (this.token.type===TokenType.Answer){
                 const answer = this.match(TokenType.Answer);
 
@@ -147,6 +147,7 @@ export default class Parser {
         questions.push({num: questions.length+1, question: question, choices: answers, ref: ref, correct: correct});
 
         this.mqfList.push({type: 'question', data: {question: preservedQuestion, choices: answers, ref: ref, correct: correct}});
+        this.mqfList.push(...comments);
     }
 
 

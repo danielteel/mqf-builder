@@ -1,3 +1,11 @@
+* {
+    touch-action: none;
+}
+
+body {
+    height: -webkit-fill-available;
+}
+
 .ace_gutter-cell.ace_breakpoint{ 
     border-radius: 3px 3px 3px 3px; 
     box-shadow: 0px 0px 2px 2px #88480c inset; 
