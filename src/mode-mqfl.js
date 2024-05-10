@@ -7,14 +7,18 @@ window.ace.define("ace/mode/mqfl_highlight_rules",["require","exports","module",
         this.$rules = {
             "start" : [
                 {
-                    token: "support.function",//section
-                    regex: /^\s*:.*$/
+                    token: "support.function",//Paragraph
+                    regex: /^(?:\d+\.){2,}.*/
                 }, {
-                    token: "constant.character.asterisk",//flag
-                    regex: /^\s*@.*$/
+                    token: "constant.character.asterisk",//Chapter
+                    regex: /^Chapter\s+\d+/
                 }, {
-                    token: 'variable.parameter',//ref
-                    regex: /^\s*(ref|reference)\s*:.*$/,
+                    token: 'variable.parameter',//Page header possibly
+                    regex: /.+\-.+\d{1,2}\s[A-Z]+\s\d{4}.*/,
+                    caseInsensitive: true
+                }, {
+                    token: 'variable.parameter',//Page header possibly
+                    regex: /\d+.+\-.+\d{1,2}\s[A-Z]+\s\d{4}.*/,
                     caseInsensitive: true
                 }, {
                     token: 'string',//answer
