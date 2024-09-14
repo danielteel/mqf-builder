@@ -7,18 +7,14 @@ window.ace.define("ace/mode/mqfl_highlight_rules",["require","exports","module",
         this.$rules = {
             "start" : [
                 {
-                    token: "support.function",//Paragraph
-                    regex: /^(?:\d+\.){2,}.*/
+                    token: "support.function",//section
+                    regex: /^\s*:.*$/
                 }, {
-                    token: "constant.character.asterisk",//Chapter
-                    regex: /^Chapter\s+\d+/
+                    token: "invalid",//flag
+                    regex: /^\s*@.*$/
                 }, {
-                    token: 'variable.parameter',//Page header possibly
-                    regex: /.+\-.+\d{1,2}\s[A-Z]+\s\d{4}.*/,
-                    caseInsensitive: true
-                }, {
-                    token: 'variable.parameter',//Page header possibly
-                    regex: /\d+.+\-.+\d{1,2}\s[A-Z]+\s\d{4}.*/,
+                    token: 'constant.character',//ref
+                    regex: /^\s*(ref|reference)\s*:.*$/,
                     caseInsensitive: true
                 }, {
                     token: 'string',//answer
@@ -39,10 +35,13 @@ window.ace.define("ace/mode/mqfl_highlight_rules",["require","exports","module",
                     token: "comment",//Comment
                     regex: /^\s*>.*$/
                 }, {
-                    token: "term",
-                    regex: /\w+/
+                    token: "variable.parameter",//question
+                    regex: /^\s*\?\s*{/
+                },{
+                    token: "variable.parameter",//question
+                    regex: /.*/
                 }, {
-                    token: "text",
+                    token: "text",//whitespace
                     regex: /\s+/
                 }
             ]
