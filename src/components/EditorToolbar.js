@@ -5,10 +5,11 @@ import FindText from './FindText';
 import BuildIcon from '@mui/icons-material/Build';
 import CodeIcon from '@mui/icons-material/Code';
 import DownloadIcon from '@mui/icons-material/Download';
-import UploadIcon from '@mui/icons-material/Upload';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-
+import Divider from '@mui/material/Divider';
+import Tooltip from '@mui/material/Tooltip';
 import { saveAs } from "file-saver";
 
 import {prettify, compileHTML} from '../common';
@@ -51,19 +52,38 @@ export default function EditorToolbar({aceRef, code, codeIsValid}){
         
         <Stack direction='row' sx={{my: '3px'}} alignItems='center'>
             <input type="file" ref={inputFileRef} style={{ display: "none" }} onChange={onFileChanged}/>
-            <ToggleButtonGroup>
-                <ToggleButton value='save' onClick={saveFile}>
-                    <DownloadIcon/>
-                </ToggleButton>
-                <ToggleButton value='open' onClick={()=>inputFileRef.current.click()}>
-                    <UploadIcon/>
-                </ToggleButton>
-                <ToggleButton value='prettify' onClick={prettifyClick} disabled={!codeIsValid}>
-                    <CodeIcon/>
-                </ToggleButton>
-                <ToggleButton value='build' disabled={!codeIsValid} onClick={compileAndDownload}>
-                    <BuildIcon/>
-                </ToggleButton>
+            <ToggleButtonGroup size="medium">
+                <Tooltip title="Open File">
+                    <ToggleButton value='open' onClick={()=>inputFileRef.current.click()}>
+                        <FolderOpenIcon/>
+                    </ToggleButton>
+                </Tooltip>
+                <Tooltip title="Download Code">
+                    <ToggleButton value='save' onClick={saveFile}>
+                        <DownloadIcon/>
+                    </ToggleButton>
+                </Tooltip>
+            </ToggleButtonGroup>
+            <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
+            <ToggleButtonGroup size="medium">
+                <Tooltip title={codeIsValid?"Format and prettify code":"Fix errors before you can format and prettify"}>
+                    <span>
+                        <ToggleButton value='prettify' onClick={prettifyClick} disabled={!codeIsValid}>
+                            <CodeIcon/>
+                        </ToggleButton>
+                    </span>
+                </Tooltip>
+            </ToggleButtonGroup>
+                
+            <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
+            <ToggleButtonGroup size="medium">
+                <Tooltip title={codeIsValid?"Compile to HTML App":"Fix errors before you can compile"}>
+                    <span>
+                        <ToggleButton value='build' disabled={!codeIsValid} onClick={compileAndDownload}>
+                            <BuildIcon/>
+                        </ToggleButton>
+                    </span>
+                </Tooltip>
             </ToggleButtonGroup>
             <div style={{flexGrow: 1}}/>
             <FindText aceRef={aceRef}/>

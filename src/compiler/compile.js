@@ -40,7 +40,7 @@ export default async function compile(text, justJSON=false){
             const htmlMQF=JSON.stringify(mqf, null, '    ');
             return {value: htmlMQF, warnings: warnings, mqf: mqf};
         }else{
-            const htmlMQF=JSON.stringify(mqf).replaceAll('\\', '\\\\').replaceAll("'", "\\'").replaceAll(`\"`, `\\"`);
+            const htmlMQF=JSON.stringify(mqf).replaceAll('\\', '\\\\').replaceAll("'", "\\'").replaceAll(`"`, `\\"`);
             return {value: shellStart+htmlMQF+shellEnd, warnings: warnings, mqf: mqf};
         }
     } catch (e) {

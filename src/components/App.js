@@ -13,10 +13,36 @@ import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 
 import Editor from './Editor';
 import Visual from './Visual';
+import Documentation from './Documentation';
 
 import 'ace-builds/src-noconflict/theme-monokai';
 import Typography from '@mui/material/Typography';
 require(`../mode-mqfl`);
+
+const defaultCode = `!This will be the title text of the generated html application
+
+:Question Section 1
+
+  When should "they're" be used?
+  Reference: English
+    A. When you imply ownership
+    B. When its a location
+    C. When you would write they are
+    Ans: C
+
+  Whats an adjective?
+   *A. a phrase naming an attribute
+    B. a word or group of words that can be used to replace a noun or noun phrase
+    C. a word or phrase that modifies or qualifies an adjective, verb, or other adverb or a word group, expressing a relation of place, time, circumstance, manner, cause, degree, etc. (e.g., gently, quite, then, there ).
+   *D. A word naming an attribute
+
+:Question Section 2
+
+  Is 5 bigger than 3?
+    Ref: Math book
+    A. Yes
+    B. No
+    Answer: A`
 
 const screens = [
     {
@@ -68,7 +94,7 @@ function App() {
         localStorageTimeoutIdRef.current = null;
         setTimeout( () => {
             let loadedCode = localStorage.getItem('mqf-builder-code');
-            if (loadedCode===null) loadedCode='';
+            if (loadedCode===null) loadedCode=defaultCode;
             _setCode(loadedCode);
         }, 500);
     }, []);
@@ -84,6 +110,7 @@ function App() {
             screenRender=<Visual code={code} setCode={setCode}/>
             break;
         case 'Documentation':
+            screenRender=<Documentation/>
             break;
         default:
             throw Error("not a valid screen, "+screen.label);
