@@ -114,7 +114,7 @@ export default class Parser {
                 correctExplicit=this.match(TokenType.Correct);
             }else if (this.token.type===TokenType.Question){
                 if (answers.length || correct.length || correctExplicit!==null | ref!=null){
-                    this.throwError('expected an choice, correct answer, or ref but found a new question');
+                    this.throwError('expected a choice, correct answer, or ref but found a new question');
                 }
                 this.addWarning('attempting to fix possible multiline question, verify and consolidate to one line please');
                 const appendThis=this.match(TokenType.Question);

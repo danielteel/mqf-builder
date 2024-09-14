@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef} from 'react';
 
 import Stack from '@mui/material/Stack';
 import FindText from './FindText';
@@ -7,7 +7,6 @@ import CodeIcon from '@mui/icons-material/Code';
 import DownloadIcon from '@mui/icons-material/Download';
 import UploadIcon from '@mui/icons-material/Upload';
 import ToggleButton from '@mui/material/ToggleButton';
-import Divider from '@mui/material/Divider';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import { saveAs } from "file-saver";

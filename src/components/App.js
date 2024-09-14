@@ -8,13 +8,14 @@ import Toolbar from '@mui/material/Toolbar';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import CodeIcon from '@mui/icons-material/Code';
-import SettingsIcon from '@mui/icons-material/Settings';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 
 import Editor from './Editor';
+import Visual from './Visual';
 
 import 'ace-builds/src-noconflict/theme-monokai';
-import { Typography } from '@mui/material';
+import Typography from '@mui/material/Typography';
 require(`../mode-mqfl`);
 
 const screens = [
@@ -23,13 +24,12 @@ const screens = [
         icon: <CodeIcon/>
     },
     {
-        label: 'Documentation',
-        icon: <QuestionMarkIcon/>
+        label: 'Visual',
+        icon: <ListAltIcon/>
     },
     {
-        label: 'Options',
-        icon: <SettingsIcon/>
-
+        label: 'Documentation',
+        icon: <QuestionMarkIcon/>
     }
 ]
 
@@ -80,9 +80,10 @@ function App() {
         case 'Code':
             screenRender=<Editor code={code} setCode={setCode}/>;
             break;
-        case 'Documentation':
+        case 'Visual':
+            screenRender=<Visual code={code} setCode={setCode}/>
             break;
-        case 'Options':
+        case 'Documentation':
             break;
         default:
             throw Error("not a valid screen, "+screen.label);
