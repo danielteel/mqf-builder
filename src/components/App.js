@@ -8,11 +8,9 @@ import Toolbar from '@mui/material/Toolbar';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import CodeIcon from '@mui/icons-material/Code';
-import ListAltIcon from '@mui/icons-material/ListAlt';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 
 import Editor from './Editor';
-import Visual from './Visual';
 import Documentation from './Documentation';
 
 import 'ace-builds/src-noconflict/theme-monokai';
@@ -48,10 +46,6 @@ const screens = [
     {
         label: 'Code',
         icon: <CodeIcon/>
-    },
-    {
-        label: 'Visual',
-        icon: <ListAltIcon/>
     },
     {
         label: 'Documentation',
@@ -106,16 +100,12 @@ function App() {
         case 'Code':
             screenRender=<Editor code={code} setCode={setCode}/>;
             break;
-        case 'Visual':
-            screenRender=<Visual code={code} setCode={setCode}/>
-            break;
         case 'Documentation':
             screenRender=<Documentation/>
             break;
         default:
             throw Error("not a valid screen, "+screen.label);
     }
-
 
 
     return (
