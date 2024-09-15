@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/mqf-builder/static/css/main.20d7d96e.css",
-    "main.js": "/mqf-builder/static/js/main.2c806e30.js",
+    "main.js": "/mqf-builder/static/js/main.4fcf1950.js",
     "static/media/shellStart.txt": "/mqf-builder/static/media/shellStart.4c164682daa1853dc01a.txt",
     "static/media/roboto-all-500-normal.woff": "/mqf-builder/static/media/roboto-all-500-normal.0ab669b7a0d19b178f57.woff",
     "static/media/roboto-all-700-normal.woff": "/mqf-builder/static/media/roboto-all-700-normal.a457fde362a540fcadff.woff",
@@ -40,10 +40,10 @@
     "static/media/roboto-greek-ext-700-normal.woff2": "/mqf-builder/static/media/roboto-greek-ext-700-normal.bd9854c751441ccc1a70.woff2",
     "index.html": "/mqf-builder/index.html",
     "main.20d7d96e.css.map": "/mqf-builder/static/css/main.20d7d96e.css.map",
-    "main.2c806e30.js.map": "/mqf-builder/static/js/main.2c806e30.js.map"
+    "main.4fcf1950.js.map": "/mqf-builder/static/js/main.4fcf1950.js.map"
   },
   "entrypoints": [
     "static/css/main.20d7d96e.css",
-    "static/js/main.2c806e30.js"
+    "static/js/main.4fcf1950.js"
   ]
 }
