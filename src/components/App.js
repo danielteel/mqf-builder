@@ -113,6 +113,7 @@ function App() {
             <AppBar position='sticky'>
                 <Toolbar>
                     <Typography variant='h5'>MQF Builder</Typography>
+                    <Typography varient='caption' sx={{marginLeft:'auto', color:'#55555555'}}>Dan Teel</Typography>
                 </Toolbar>
             </AppBar>
             {
