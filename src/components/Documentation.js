@@ -34,7 +34,7 @@ export default function Documentation(){
             <blockquote>
                 To begin, just write a question
                 <pre>What does 5x4-5 come out to?</pre>
-                There is an edge that requires special treatment. If a questions text will begin with a letter and a colon, the questions text should begin with ?. This prevents the parser reading the question as an answer.
+                There is an edge case that requires special treatment. If a questions text will begin with a letter and a colon, the questions text should begin with ?. This prevents the parser reading the question as an answer.
                 <pre>Example edge case with solution: ?A. B. C. D. what&#39;s next in this pattern?</pre>
             </blockquote>
             <h4 id="an-optional-reference">An optional reference</h4>
@@ -49,12 +49,12 @@ export default function Documentation(){
             <blockquote>
                 Now that we have a question, and we included an optional reference, lets add some choices.
                 <pre>
-                    What does 5x4-5 come out to?
+                    {`What does 5x4-5 come out to?
                     Ref: Math book
                     A. 15
                     B. -5
                     C. 20
-                    D. 11
+                    D. 11`}
                 </pre>
                 As shown above, in alphabetical order (no skipping letters), you write a letter, a period, and then the choice text. You can have up to 26 (A-Z) possible choices, but you must have at least 2 choices (A and B).
                 <em>Note: each answer needs to be on a single line of text, no line breaks allowed.</em>
@@ -67,11 +67,11 @@ export default function Documentation(){
                 <pre>Answer: A</pre>
                 Using a new answer line like just shown, you can only identify one correct answer. If you want the test taker to have to select multiple items as correct choices, you simply prepend the choices themselves with an asterisk, like so
                 <pre>
-                    What is math? Select both correct answers.
+                    {`What is math? Select both correct answers.
                     *A. Hard
                     B. Easy
                     C. Fun
-                    *D. Scary
+                    *D. Scary`}
                 </pre>
                 This method can also be used to identify one correct answer, it doesnt have to be multiple.
             </blockquote>
