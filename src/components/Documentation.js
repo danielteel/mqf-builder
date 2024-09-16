@@ -1,6 +1,9 @@
 import  Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
+function codeTag({children}){
+    return <pre sx={{backgroundColor: '#000'}}>{children}</pre>
+}
 
 export default function Documentation(){
 
